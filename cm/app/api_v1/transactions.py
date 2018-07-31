@@ -29,21 +29,21 @@ def get(filename):
 @api.route('/register/', methods=['POST'])
 def register():
 
-    #""" register the Calculation module (CM)to the main web services (MWS)-
-    #the CM will send its SIGNATURE to the main web service, CM SIGNATURE contains elements to identity the CM and
-    #how to handle it and the list of input it needs on the user interface. CM SIGNATURE can be find on app/constants.py file, this file must be change manually
+    """ register the Calculation module (CM)to the main web services (MWS)-
+    the CM will send its SIGNATURE to the main web service, CM SIGNATURE contains elements to identity the CM and
+    how to handle it and the list of input it needs on the user interface. CM SIGNATURE can be find on app/constants.py file, this file must be change manually
     #Also constants.py must contains a CM_ID that is a unique number that as to be defined by the CREM (Centre de Recherches Energetiques et Municipales de Martigny)
 
-    #  ---
-    #  definitions:
-    #     Color:
-    #     type: string
-    #  #responses:
-    #  200:
-    #   description: MWS is aware of the CM
-    #  examples:
-    #   results: {"response": {"category": "Buildings", "cm_name": "calculation_module_1", "layers_needed": ["heat_density_tot"], "cm_description": "this computation module allows to ....", "cm_url": "http://127.0.0.1:5002/", "cm_id": 1, "inputs_calculation_module": [{"input_min": 1, "input_value": 1, "input_unit": "none", "input_name": "Reduction factor", "cm_id": 1, "input_type": "input", "input_parameter_name": "reduction_factor", "input_max": 10}, {"input_min": 10, "input_value": 50, "input_unit": "", "input_name": "Blablabla", "cm_id": 1, "input_type": "range", "input_parameter_name": "bla", "input_max": 1000}]}}
-    #    """
+      ---
+      definitions:
+         Color:
+         type: string
+      #responses:
+      200:
+       description: MWS is aware of the CM
+      examples:
+       results: {"response": {"category": "Buildings", "cm_name": "calculation_module_1", "layers_needed": ["heat_density_tot"], "cm_description": "this computation module allows to ....", "cm_url": "http://127.0.0.1:5002/", "cm_id": 1, "inputs_calculation_module": [{"input_min": 1, "input_value": 1, "input_unit": "none", "input_name": "Reduction factor", "cm_id": 1, "input_type": "input", "input_parameter_name": "reduction_factor", "input_max": 10}, {"input_min": 10, "input_value": 50, "input_unit": "", "input_name": "Blablabla", "cm_id": 1, "input_type": "range", "input_parameter_name": "bla", "input_max": 1000}]}}
+        """
 
     # about to send the external IP
     ip = socket.gethostbyname(socket.gethostname())
@@ -118,12 +118,15 @@ def compute():
     filename = data["filename"]
     # part to modify from the CM rpovider
         #parameters needed from the CM
+    pix_threshold = data["pix_threshold"]
+    DH_threshold = data["DH_threshold"]
     reduction_factor = data["reduction_factor"]
     print 'reduction_factor ',reduction_factor
     file_path = savefile(filename,url_file)
     filename = str(uuid.uuid4()) + '.tif'
     path_final = UPLOAD_DIRECTORY+'/'+filename
-    indicator = calculation(file_path, factor=reduction_factor, directory=path_final)
+
+    indicator = calculation(file_path, pix_threshold, DH_threshold, directory=path_final)
     base_url =  request.base_url.replace("compute","files")
     url_download_raster = base_url + filename
     print 'indicator {}'.format(indicator)
